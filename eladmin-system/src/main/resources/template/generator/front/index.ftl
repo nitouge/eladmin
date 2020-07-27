@@ -17,16 +17,11 @@
   <#if betweens??>
     <#list betweens as column>
       <#if column.queryType = 'BetWeen'>
-        <el-date-picker
+        <date-range-picker
           v-model="query.${column.changeColumnName}"
-          :default-time="['00:00:00','23:59:59']"
-          type="daterange"
-          range-separator=":"
-          size="small"
-          class="date-item"
-          value-format="yyyy-MM-dd HH:mm:ss"
           start-placeholder="${column.changeColumnName}Start"
-          end-placeholder="${column.changeColumnName}End"
+          end-placeholder="${column.changeColumnName}Start"
+          class="date-item"
         />
       </#if>
     </#list>

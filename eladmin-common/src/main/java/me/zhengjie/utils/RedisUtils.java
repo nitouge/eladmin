@@ -15,6 +15,8 @@
  */
 package me.zhengjie.utils;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -174,19 +176,19 @@ public class RedisUtils {
         if (keys != null && keys.length > 0) {
             if (keys.length == 1) {
                 boolean result = redisTemplate.delete(keys[0]);
-                System.out.println("--------------------------------------------");
-                System.out.println(new StringBuilder("删除缓存：").append(keys[0]).append("，结果：").append(result));
-                System.out.println("--------------------------------------------");
+                log.debug("--------------------------------------------");
+                log.debug(new StringBuilder("删除缓存：").append(keys[0]).append("，结果：").append(result).toString());
+                log.debug("--------------------------------------------");
             } else {
                 Set<Object> keySet = new HashSet<>();
                 for (String key : keys) {
                     keySet.addAll(redisTemplate.keys(key));
                 }
                 long count = redisTemplate.delete(keySet);
-                System.out.println("--------------------------------------------");
-                System.out.println("成功删除缓存：" + keySet.toString());
-                System.out.println("缓存删除数量：" + count + "个");
-                System.out.println("--------------------------------------------");
+                log.debug("--------------------------------------------");
+                log.debug("成功删除缓存：" + keySet.toString());
+                log.debug("缓存删除数量：" + count + "个");
+                log.debug("--------------------------------------------");
             }
         }
     }
@@ -210,8 +212,10 @@ public class RedisUtils {
      * @return
      */
     public List<Object> multiGet(List<String> keys) {
-        Object obj = redisTemplate.opsForValue().multiGet(Collections.singleton(keys));
-        return null;
+        List list = redisTemplate.opsForValue().multiGet(Sets.newHashSet(keys));
+        List resultList = Lists.newArrayList();
+        Optional.ofNullable(list).ifPresent(e-> list.forEach(ele-> Optional.ofNullable(ele).ifPresent(resultList::add)));
+        return resultList;
     }
 
     /**
@@ -697,9 +701,9 @@ public class RedisUtils {
         }
         long count = redisTemplate.delete(keys);
         // 此处提示可自行删除
-        System.out.println("--------------------------------------------");
-        System.out.println("成功删除缓存：" + keys.toString());
-        System.out.println("缓存删除数量：" + count + "个");
-        System.out.println("--------------------------------------------");
+        log.debug("--------------------------------------------");
+        log.debug("成功删除缓存：" + keys.toString());
+        log.debug("缓存删除数量：" + count + "个");
+        log.debug("--------------------------------------------");
     }
 }
